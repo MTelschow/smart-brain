@@ -57,8 +57,27 @@ class App extends Component {
 			box: {},
 			route: 'signin',
 			isSignedIn: false,
+			user: {
+				id: '',
+				name: '',
+				email: '',
+				entries: 0,
+				joined: '',
+			},
 		};
 	}
+
+	loadUser = (data) => {
+		this.setState({
+			user: {
+				id: data.id,
+				name: data.name,
+				email: data.email,
+				entries: data.entries,
+				joined: data.joined,
+			},
+		});
+	};
 
 	calculateFaceLocation = (data) => {
 		const clarifyFace =
@@ -75,7 +94,6 @@ class App extends Component {
 	};
 
 	displayFaceBox = (box) => {
-		console.log('box', box);
 		this.setState({ box: box });
 	};
 
@@ -91,9 +109,22 @@ class App extends Component {
 			returnClarifyRequestOptions(this.state.input)
 		)
 			.then((response) => response.json())
-			.then((response) =>
-				this.displayFaceBox(this.calculateFaceLocation(response))
-			)
+			.then((response) => {
+				if (response) {
+					fetch('http://localhost:3000/image', {
+						method: 'put',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							id: this.state.user.id,
+						}),
+					})
+						.then((response) => response.json())
+						.then((count) => {
+							this.setState(Object.assign(this.state.user, { entries: count }));
+						});
+				}
+				this.displayFaceBox(this.calculateFaceLocation(response));
+			})
 			.catch((error) => console.log(error));
 	};
 
@@ -117,7 +148,10 @@ class App extends Component {
 				{route === 'home' ? (
 					<div>
 						<Logo />
-						<Rank />
+						<Rank
+							name={this.state.user.name}
+							entries={this.state.user.entries}
+						/>
 						<ImgLinkForm
 							onInputChange={this.onInputChange}
 							onButtonSubmit={this.onButtonSubmit}
@@ -130,7 +164,10 @@ class App extends Component {
 					</div>
 				) : route === 'signin' || route === 'signout' ? (
 					<div>
-						<SignIn onRouteChange={this.onRouteChange} />
+						<SignIn
+							loadUser={this.loadUser}
+							onRouteChange={this.onRouteChange}
+						/>
 						<ParticlesBg
 							type='cobweb'
 							bg={{ position: 'fixed', zIndex: -1, top: 0, left: 0 }}
@@ -138,7 +175,10 @@ class App extends Component {
 					</div>
 				) : (
 					<div>
-						<Register onRouteChange={this.onRouteChange} />
+						<Register
+							loadUser={this.loadUser}
+							onRouteChange={this.onRouteChange}
+						/>
 						<ParticlesBg
 							type='cobweb'
 							bg={{ position: 'fixed', zIndex: -1, top: 0, left: 0 }}
