@@ -6,3 +6,10 @@
     justify-content: center;
     cursor: pointer;
   }
+
+  #inputimage {
+    width: 500px;
+    height: auto;
+
+    max-width: 90vw;
+  }

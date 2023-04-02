@@ -1,4 +1,5 @@
 .form {
     width: 700px;
+    max-width: 90vw;
     background: rgba(0, 114, 114, 0.799)
 }
