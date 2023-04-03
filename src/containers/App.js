@@ -133,6 +133,7 @@ class App extends Component {
 			this.setState({ isSignedIn: true });
 		} else if (route === 'signout') {
 			this.setState({ isSignedIn: false });
+			this.setState({ imgUrl: '' });
 		}
 		this.setState({ route: route });
 	};
