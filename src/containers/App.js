@@ -9,45 +9,6 @@ import ImgLinkForm from '../components/ImgLinkForm/ImgLinkForm';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
 import './App.css';
 
-const returnClarifyRequestOptions = (imgUrl) => {
-	// Your PAT (Personal Access Token) can be found in the portal under Authentification
-	const PAT = 'ac3d35e0d8dc4d1bbee253f30514c1c6';
-	// Specify the correct user_id/app_id pairings
-	// Since you're making inferences outside your app's scope
-	const USER_ID = '3d9fh02tmmr6';
-	const APP_ID = 'facedetectionbrain';
-	// Change these to whatever model and image URL you want to use
-	// const MODEL_ID = 'face-detection';
-	const IMAGE_URL = imgUrl;
-
-	const raw = JSON.stringify({
-		user_app_id: {
-			user_id: USER_ID,
-			app_id: APP_ID,
-		},
-		inputs: [
-			{
-				data: {
-					image: {
-						url: IMAGE_URL,
-					},
-				},
-			},
-		],
-	});
-
-	const requestOptions = {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			Authorization: 'Key ' + PAT,
-		},
-		body: raw,
-	};
-
-	return requestOptions;
-};
-
 const initialState = {
 	input: '',
 	imgUrl: '',
@@ -106,12 +67,16 @@ class App extends Component {
 	onButtonSubmit = () => {
 		this.setState({ imgUrl: this.state.input });
 
-		fetch(
-			'https://api.clarifai.com/v2/models/face-detection/outputs',
-			returnClarifyRequestOptions(this.state.input)
-		)
+		fetch('http://localhost:3000/imageurl', {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				input: this.state.input,
+			}),
+		})
 			.then((response) => response.json())
 			.then((response) => {
+				console.log('response', response);
 				if (response) {
 					fetch('http://localhost:3000/image', {
 						method: 'put',
