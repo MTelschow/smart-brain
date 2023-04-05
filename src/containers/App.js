@@ -48,23 +48,25 @@ const returnClarifyRequestOptions = (imgUrl) => {
 	return requestOptions;
 };
 
+const initialState = {
+	input: '',
+	imgUrl: '',
+	box: {},
+	route: 'signin',
+	isSignedIn: false,
+	user: {
+		id: '',
+		name: '',
+		email: '',
+		entries: 0,
+		joined: '',
+	},
+};
+
 class App extends Component {
 	constructor() {
 		super();
-		this.state = {
-			input: '',
-			imgUrl: '',
-			box: {},
-			route: 'signin',
-			isSignedIn: false,
-			user: {
-				id: '',
-				name: '',
-				email: '',
-				entries: 0,
-				joined: '',
-			},
-		};
+		this.state = initialState;
 	}
 
 	loadUser = (data) => {
@@ -132,8 +134,7 @@ class App extends Component {
 		if (route === 'home') {
 			this.setState({ isSignedIn: true });
 		} else if (route === 'signout') {
-			this.setState({ isSignedIn: false });
-			this.setState({ imgUrl: '' });
+			this.setState(initialState);
 		}
 		this.setState({ route: route });
 	};
