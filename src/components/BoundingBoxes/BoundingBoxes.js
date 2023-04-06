@@ -3,7 +3,7 @@ import './BoundingBoxes.css'
 
 const BoundingBoxes = ({ boxes }) => (
 	<div>
-		{boxes.map((box) => (
+		{boxes.map((box, index) => (
 			<div
 				className='bounding-box'
 				style={{
@@ -12,6 +12,7 @@ const BoundingBoxes = ({ boxes }) => (
 					bottom: box.bottomRow,
 					left: box.leftCol,
 				}}
+				key={`bounding-box${index}`}
 			></div>
 		))}
 	</div>
