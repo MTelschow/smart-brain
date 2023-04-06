@@ -1,4 +1,5 @@
 import React from 'react';
+import './BoundingBoxes.css'
 
 const BoundingBoxes = ({ boxes }) => (
 	<div>
