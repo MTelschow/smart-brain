@@ -12,7 +12,7 @@ import './App.css';
 const initialState = {
 	input: '',
 	imgUrl: '',
-	box: [{}],
+	boxes: [{}],
 	route: 'signin',
 	isSignedIn: false,
 	user: {
@@ -43,21 +43,26 @@ class App extends Component {
 	};
 
 	calculateFaceLocation = (data) => {
-		const clarifyFace =
-			data.outputs[0].data.regions[0].region_info.bounding_box;
+		const clarifyFaces = data.outputs[0].data.regions.map((region) => {
+			return region.region_info.bounding_box;
+		});
+
 		const imgage = document.getElementById('inputimage');
 		const width = Number(imgage.width);
 		const height = Number(imgage.height);
-		return {
-			leftCol: clarifyFace.left_col * width,
-			topRow: clarifyFace.top_row * height,
-			rightCol: width - clarifyFace.right_col * width,
-			bottomRow: height - clarifyFace.bottom_row * height,
-		};
+
+		return clarifyFaces.map((face) => {
+			return {
+				leftCol: face.left_col * width,
+				topRow: face.top_row * height,
+				rightCol: width - face.right_col * width,
+				bottomRow: height - face.bottom_row * height,
+			};
+		});
 	};
 
-	displayFaceBox = (box) => {
-		this.setState({ box: [box] });
+	displayFaceBox = (boxes) => {
+		this.setState({ boxes: boxes });
 	};
 
 	onInputChange = (event) => {
@@ -76,7 +81,6 @@ class App extends Component {
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log('response', response);
 				if (response) {
 					fetch('http://localhost:3000/image', {
 						method: 'put',
@@ -106,7 +110,7 @@ class App extends Component {
 	};
 
 	render() {
-		const { isSignedIn, imgUrl, route, box } = this.state;
+		const { isSignedIn, imgUrl, route, boxes } = this.state;
 		return (
 			<div className='App'>
 				<Navigation
@@ -124,7 +128,7 @@ class App extends Component {
 							onInputChange={this.onInputChange}
 							onButtonSubmit={this.onButtonSubmit}
 						/>
-						<FaceRecognition box={box} imgUrl={imgUrl} />
+						<FaceRecognition boxes={boxes} imgUrl={imgUrl} />
 						<ParticlesBg
 							type='lines'
 							bg={{ position: 'fixed', zIndex: -1, top: 0, left: 0 }}
