@@ -10,7 +10,7 @@ const ImgLinkForm = ({ onInputChange, onButtonSubmit }) => {
 			<div className='pa3 br3 shadow-5 center form'>
 				<input
 					className='f4 pa2 w-70 center'
-					placeholder='Put an Image-URL here'
+					placeholder='Put an Image-URL or get a random one'
 					type='text'
 					onInput={onInputChange}
 				/>
