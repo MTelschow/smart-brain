@@ -7,6 +7,8 @@ class Register extends Component {
 			name: '',
 			email: '',
 			password: '',
+			loading: false,
+			userMsg: '',
 		};
 	}
 
@@ -23,6 +25,18 @@ class Register extends Component {
 	};
 
 	onSubmitSignIn = () => {
+		if (this.state.name === '') {
+			return this.setState({ userMsg: 'Provide Name' });
+		}
+		if (this.state.email === '') {
+			return this.setState({ userMsg: 'Provide Email' });
+		}
+		if (this.state.password === '') {
+			return this.setState({ userMsg: 'Provide Password' });
+		}
+
+
+		this.setState({ isLoading: true, userMsg: '' });
 		fetch('https://smart-brain-api-99vq.onrender.com/register', {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
@@ -37,7 +51,10 @@ class Register extends Component {
 				if (user.id) {
 					this.props.loadUser(user);
 					this.props.onRouteChange('home');
+				} else {
+					this.setState({ userMsg: 'Email already used' });
 				}
+				this.setState({ isLoading: false });
 			});
 	};
 
@@ -86,11 +103,17 @@ class Register extends Component {
 								/>
 							</div>
 						</fieldset>
+						{this.state.userMsg && (
+							<div>
+								<div className='red b'>{this.state.userMsg}</div>
+								<br></br>
+							</div>
+						)}
 						<div className=''>
 							<input
 								className='b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib'
 								type='submit'
-								value='Register'
+								value={this.state.isLoading ? 'Loading...' : 'Register'}
 								onClick={this.onSubmitSignIn}
 							/>
 						</div>
